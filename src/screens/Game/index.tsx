@@ -1,18 +1,31 @@
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Background } from '../../components/Background';
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { GameParams } from '../../@types/navegation';
 import { View, Image, TouchableOpacity } from 'react-native';
-import { Entypo } from "@expo/vector-icons";
+import { useRoute, useNavigation } from "@react-navigation/native";
+
+import { Background } from '../../components/Background';
+import { Heading } from "../../components/Heading";
+import { DuoCard } from "../../components/DuoCard";
+
+import logoImg from "../../assets/logo-nlw-esports.png";
 import { THEME } from "../../theme";
 import { styles } from './styles';
-import { GameParams } from '../../@types/navegation';
+import { Entypo } from "@expo/vector-icons";
 
-import { Heading } from "../../components/Heading";
-import logoImg from "../../assets/logo-nlw-esports.png";
+import { DuoCardProps } from "../../components/DuoCard";
+
 export function Game() {
+    const [duo, setDuo] = useState<DuoCardProps[]>([]);
     const navegation = useNavigation();
     const route = useRoute();
     const game = route.params as GameParams;
+
+    useEffect(() => {
+        fetch(`http://10.0.0.100:3000/games/${game.id}/ads`)
+            .then(response => response.json())
+            .then(data => console.log(data));
+    }, []);
 
     function handleGoBack() {
         navegation.goBack();
@@ -39,6 +52,8 @@ export function Game() {
                     title={game.name}
                     subtitle="Conete-se e comece a jogar!"
                 />
+
+                <DuoCard data={duo[0]} />
             </SafeAreaView>
         </Background>
     );
