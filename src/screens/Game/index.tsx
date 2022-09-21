@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GameParams } from '../../@types/navegation';
-import { View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity, FlatList, Text } from 'react-native';
 import { useRoute, useNavigation } from "@react-navigation/native";
 
 import { Background } from '../../components/Background';
 import { Heading } from "../../components/Heading";
-import { DuoCard } from "../../components/DuoCard";
+import { DuoCard, DuoCardProps } from "../../components/DuoCard";
 
 import logoImg from "../../assets/logo-nlw-esports.png";
 import { THEME } from "../../theme";
 import { styles } from './styles';
 import { Entypo } from "@expo/vector-icons";
-
-import { DuoCardProps } from "../../components/DuoCard";
 
 export function Game() {
     const [duo, setDuo] = useState<DuoCardProps[]>([]);
@@ -24,7 +22,7 @@ export function Game() {
     useEffect(() => {
         fetch(`http://10.0.0.100:3000/games/${game.id}/ads`)
             .then(response => response.json())
-            .then(data => console.log(data));
+            .then(data => setDuo(data))
     }, []);
 
     function handleGoBack() {
@@ -47,13 +45,23 @@ export function Game() {
                     style={styles.cover}
                     resizeMode="cover"
                 />
-
+ 
                 <Heading
                     title={game.name}
                     subtitle="Conete-se e comece a jogar!"
                 />
 
-                <DuoCard data={duo[0]} />
+                <FlatList
+                    data={duo}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item }) => <DuoCard data={item} onConnect={() => { }} />}
+                    horizontal
+                    contentContainerStyle={duo.length > 0 ? styles.contentList : styles.emptyListContent}
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.containerList}
+                    ListEmptyComponent={() => (<Text style={styles.emptyListText}>"Nenhum jogador encontrado"</Text>)}
+                />
+
             </SafeAreaView>
         </Background>
     );
