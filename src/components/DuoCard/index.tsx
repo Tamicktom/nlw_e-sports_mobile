@@ -1,12 +1,14 @@
-import { View } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
+import { GameController } from 'phosphor-react-native';
 
 import { DuoInfo } from '../DuoInfo';
 
 import { styles } from './styles';
+import { THEME } from '../../theme';
 
 export interface DuoCardProps {
-    hourEnd: string;
-    hourStart: string;
+    hoursEnd: string;
+    hoursStart: string;
     id: string;
     name: string;
     useVoiceChanel: boolean;
@@ -16,9 +18,10 @@ export interface DuoCardProps {
 
 interface Props {
     data: DuoCardProps;
+    onConnect: () => void;
 }
 
-export function DuoCard({ data }: Props) {
+export function DuoCard({ data, onConnect }: Props) {
     return (
         <View style={styles.container}>
             <DuoInfo
@@ -27,14 +30,31 @@ export function DuoCard({ data }: Props) {
             <DuoInfo
                 label="Tempo de Jogo"
                 value={
-                    data.yearsPlaying > 1 ? `${data.yearsPlaying} anos` : `${data.yearsPlaying
-                        } ano`} />
+                    data.yearsPlaying > 1 ? `${data.yearsPlaying} anos` : `${data.yearsPlaying} ano`} />
             <DuoInfo
                 label="Disponibilidade"
-                value={`${data.weekDays.length} dias`} />
+                value={`${data.weekDays.length} dias \u2022 ${data.hoursStart}-${data.hoursEnd}`} />
             <DuoInfo
-                label="Name"
-                value="John Doe" />
+                label="Chamada de áudio"
+                value={data.useVoiceChanel ? "Sim" : "Não"}
+                colorValue={data.useVoiceChanel ? THEME.COLORS.SUCCESS : THEME.COLORS.ALERT}
+            />
+
+            <TouchableOpacity
+                style={styles.button}
+                onPress={onConnect}
+            >
+
+                <GameController
+                    color={THEME.COLORS.TEXT}
+                    size={20}
+                />
+
+                <Text style={styles.buttonTitle}>
+                    Conectar
+                </Text>
+
+            </TouchableOpacity>
         </View>
     );
 }
